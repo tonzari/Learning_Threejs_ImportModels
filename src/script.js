@@ -21,19 +21,27 @@ const scene = new THREE.Scene()
 const duckDracoPath = '/models/Duck/glTF-Draco/Duck.gltf'
 const duckPath = '/models/Duck/glTF/Duck.gltf'
 const helmetPath =  '/models/FlightHelmet/glTF/FlightHelmet.gltf'
-
+const foxPath = '/models/Fox/glTF/Fox.gltf'
 
 const dracoLoader = new DRACOLoader()
 dracoLoader.setDecoderPath('/draco/') // a decoder is needed in your static files dir
 const gltfLoader = new GLTFLoader() // you need to user a loader. there are many different loaders for different file formats
 gltfLoader.setDRACOLoader(dracoLoader)
 
+let mixer = null
 
 gltfLoader.load(
-    duckDracoPath,
+    foxPath,
     (gltf) => 
     {
         console.log('file loaded!')
+        
+        mixer = new THREE.AnimationMixer(gltf.scene)
+        const action = mixer.clipAction(gltf.animations[0])
+
+        action.play()
+
+        gltf.scene.scale.set(0.025,0.025,0.025)
         scene.add(gltf.scene)
     },
     () =>
@@ -137,6 +145,10 @@ const tick = () =>
     const elapsedTime = clock.getElapsedTime()
     const deltaTime = elapsedTime - previousTime
     previousTime = elapsedTime
+
+    if(mixer) {
+        mixer.update(deltaTime)
+    }
 
     // Update controls
     controls.update()
