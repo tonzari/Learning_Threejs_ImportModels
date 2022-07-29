@@ -1,6 +1,8 @@
 import './style.css'
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 import * as dat from 'lil-gui'
 
 /**
@@ -14,6 +16,36 @@ const canvas = document.querySelector('canvas.webgl')
 
 // Scene
 const scene = new THREE.Scene()
+
+// MODELS
+const duckDracoPath = '/models/Duck/glTF-Draco/Duck.gltf'
+const duckPath = '/models/Duck/glTF/Duck.gltf'
+const helmetPath =  '/models/FlightHelmet/glTF/FlightHelmet.gltf'
+
+
+const dracoLoader = new DRACOLoader()
+dracoLoader.setDecoderPath('/draco/') // a decoder is needed in your static files dir
+const gltfLoader = new GLTFLoader() // you need to user a loader. there are many different loaders for different file formats
+gltfLoader.setDRACOLoader(dracoLoader)
+
+
+gltfLoader.load(
+    duckDracoPath,
+    (gltf) => 
+    {
+        console.log('file loaded!')
+        scene.add(gltf.scene)
+    },
+    () =>
+    {
+        console.log('file loading...')
+    },
+    () =>
+    {
+        console.log('file could not be loaded')
+    }
+)
+
 
 /**
  * Floor
